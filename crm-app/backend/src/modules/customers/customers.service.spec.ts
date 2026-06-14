@@ -9,7 +9,13 @@ const baseCustomer = {
   companyName: 'Acme',
   status: 'PROSPECT',
   ownerId: 'user-1',
+  owner: null,
   deletedAt: null,
+};
+
+const baseCustomerWithCount = {
+  ...baseCustomer,
+  _count: { contacts: 0, activities: 0, tasks: 0 },
 };
 
 describe('CustomersService', () => {
@@ -21,10 +27,17 @@ describe('CustomersService', () => {
     prisma = {
       customer: {
         create: jest.fn().mockResolvedValue(baseCustomer),
-        findFirst: jest.fn().mockResolvedValue(baseCustomer),
+        findFirst: jest.fn().mockResolvedValue(baseCustomerWithCount),
         update: jest.fn().mockResolvedValue(baseCustomer),
         findMany: jest.fn().mockResolvedValue([baseCustomer]),
         count: jest.fn().mockResolvedValue(1),
+      },
+      opportunity: {
+        count: jest.fn().mockResolvedValue(0),
+        updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
+      file: {
+        count: jest.fn().mockResolvedValue(0),
       },
     };
     notifications = { createAndSend: jest.fn() };
@@ -66,15 +79,14 @@ describe('CustomersService', () => {
       ).rejects.toThrow(ConflictException);
     });
 
-    it('throws ForbiddenException when non-admin tries to archive', async () => {
+    it('throws ForbiddenException when non-admin calls transition on archived customer', async () => {
       prisma.customer.findFirst.mockResolvedValue({
-        ...baseCustomer,
-        status: 'INACTIVE',
+        ...baseCustomerWithCount,
+        status: 'ARCHIVED',
       });
-      const actor = { id: 'user-2', role: 'SALES_REPRESENTATIVE' } as any;
-      await expect(service.archive('cust-1', actor)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        service.transition('cust-1', { status: 'INACTIVE' } as any, {}, false),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 });

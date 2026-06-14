@@ -22,6 +22,7 @@ describe('TasksService', () => {
       task: {
         create: jest.fn().mockResolvedValue({ ...baseTask, id: 'new-task' }),
         findFirst: jest.fn().mockResolvedValue(baseTask),
+        findUnique: jest.fn().mockResolvedValue(baseTask),
         update: jest.fn().mockResolvedValue(baseTask),
         findMany: jest.fn().mockResolvedValue([baseTask]),
         count: jest.fn().mockResolvedValue(1),
@@ -47,8 +48,8 @@ describe('TasksService', () => {
         status: 'OPEN',
         dueDate: new Date(Date.now() - 1000),
       };
-      const result = (service as any).addIsOverdue([task]);
-      expect(result[0].isOverdue).toBe(true);
+      const result = (service as any).addIsOverdue(task);
+      expect(result.isOverdue).toBe(true);
     });
 
     it('does not mark as overdue when status is COMPLETED', () => {
@@ -57,8 +58,8 @@ describe('TasksService', () => {
         status: 'COMPLETED',
         dueDate: new Date(Date.now() - 1000),
       };
-      const result = (service as any).addIsOverdue([task]);
-      expect(result[0].isOverdue).toBe(false);
+      const result = (service as any).addIsOverdue(task);
+      expect(result.isOverdue).toBe(false);
     });
 
     it('does not mark as overdue when dueDate is in the future', () => {
@@ -67,14 +68,14 @@ describe('TasksService', () => {
         status: 'OPEN',
         dueDate: new Date(Date.now() + 86400_000),
       };
-      const result = (service as any).addIsOverdue([task]);
-      expect(result[0].isOverdue).toBe(false);
+      const result = (service as any).addIsOverdue(task);
+      expect(result.isOverdue).toBe(false);
     });
   });
 
   describe('complete', () => {
     it('throws ConflictException if task is not OPEN', async () => {
-      prisma.task.findFirst.mockResolvedValue({
+      prisma.task.findUnique.mockResolvedValue({
         ...baseTask,
         status: 'COMPLETED',
       });
@@ -85,7 +86,7 @@ describe('TasksService', () => {
     });
 
     it('completes an OPEN task successfully', async () => {
-      prisma.task.findFirst.mockResolvedValue(baseTask);
+      prisma.task.findUnique.mockResolvedValue(baseTask);
       prisma.task.update.mockResolvedValue({
         ...baseTask,
         status: 'COMPLETED',
@@ -112,7 +113,7 @@ describe('TasksService', () => {
       expect(notifications.createAndSend).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'TASK_ASSIGNED',
-          recipientId: 'user-2',
+          userId: 'user-2',
         }),
       );
     });

@@ -2,8 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException, ForbiddenException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
+
+jest.mock('bcrypt', () => ({
+  compare: jest.fn(),
+  hash: jest.fn(),
+  genSalt: jest.fn(),
+}));
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RefreshTokenService } from './services/refresh-token.service';
 import { PasswordResetTokenService } from './services/password-reset-token.service';
@@ -78,7 +84,7 @@ describe('AuthService', () => {
 
     it('throws UnauthorizedException for wrong password', async () => {
       (prisma.user.findFirst as jest.Mock).mockResolvedValue(mockUser);
-      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as never);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
       await expect(
         service.loginWithPassword('admin@crm.local', 'wrong'),
       ).rejects.toThrow(UnauthorizedException);
@@ -86,7 +92,7 @@ describe('AuthService', () => {
 
     it('returns tokens for valid admin credentials', async () => {
       (prisma.user.findFirst as jest.Mock).mockResolvedValue(mockUser);
-      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       const result = await service.loginWithPassword(
         'admin@crm.local',
         'Admin@123',

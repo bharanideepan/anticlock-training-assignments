@@ -38,6 +38,14 @@ describe('OpportunitiesService', () => {
           name: 'Qualified',
           isTerminal: false,
         }),
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'stage-2',
+          name: 'Qualified',
+          isTerminal: false,
+        }),
+      },
+      file: {
+        count: jest.fn().mockResolvedValue(0),
       },
     };
     notifications = { createAndSend: jest.fn() };
@@ -70,7 +78,7 @@ describe('OpportunitiesService', () => {
       expect(notifications.createAndSend).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'OPPORTUNITY_ASSIGNED',
-          recipientId: 'user-2',
+          userId: 'user-2',
         }),
       );
     });
@@ -93,16 +101,22 @@ describe('OpportunitiesService', () => {
   });
 
   describe('terminal state enforcement', () => {
-    it('throws ConflictException when moving from a terminal stage', async () => {
+    it('throws ConflictException when moving to a terminal stage', async () => {
       prisma.opportunity.findFirst.mockResolvedValue({
         ...baseOpp,
-        stage: { id: 'won-stage', isTerminal: true, terminalOutcome: 'WON' },
+        _count: { tasks: 0 },
+      });
+      prisma.pipelineStage.findUnique.mockResolvedValue({
+        id: 'won-stage',
+        name: 'Won',
+        isTerminal: true,
+        terminalOutcome: 'WON',
       });
       const actor = { id: 'user-1', role: 'SALES_MANAGER' } as any;
       await expect(
         service.moveStage(
           'opp-1',
-          { stageId: 'stage-2' } as any,
+          { stageId: 'won-stage' } as any,
           actor.id,
           actor.role,
           {} as any,
