@@ -1,8 +1,10 @@
 # --- Build stage ---
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 WORKDIR /workspace
 
-RUN apk add --no-cache openssl && corepack enable && corepack prepare pnpm@9 --activate
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && \
+    rm -rf /var/lib/apt/lists/* && \
+    corepack enable && corepack prepare pnpm@9 --activate
 
 # Copy workspace manifests first for layer caching
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -24,12 +26,14 @@ RUN cd backend && pnpm exec tsc \
   prisma/seed.ts
 
 # --- Production stage ---
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN apk add --no-cache openssl && corepack enable && corepack prepare pnpm@9 --activate
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && \
+    rm -rf /var/lib/apt/lists/* && \
+    corepack enable && corepack prepare pnpm@9 --activate
 
 # Copy workspace manifests for prod install
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -49,8 +53,8 @@ COPY --from=builder /workspace/backend/seed-dist ./backend/seed-dist
 COPY backend/entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nestjs && \
+RUN groupadd --gid 1001 nodejs && \
+    useradd --uid 1001 --gid nodejs --no-create-home --shell /bin/false nestjs && \
     chown -R nestjs:nodejs /app
 
 USER nestjs
