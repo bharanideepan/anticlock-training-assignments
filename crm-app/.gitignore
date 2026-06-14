@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+pnpm-debug.log*
+
+# Coverage
+coverage/
+.nyc_output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Prisma
+backend/prisma/migrations/*.db
+*.db-journal
+
+# Kubernetes secrets (never commit)
+k8s/*.secret.yaml
+k8s/secrets/
+kubeconfig*
+*.key
+*.crt
+
+# Seed credentials (dev-only, never commit)
+SEED_CREDENTIALS.md
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Misc
+*.tmp
+.cache/
+
+# Claude Code local settings
+.claude/settings.local.json

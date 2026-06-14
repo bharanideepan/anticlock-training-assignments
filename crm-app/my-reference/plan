@@ -1,0 +1,56 @@
+Generate a production-grade implementation plan for this CRM system.
+
+Technical Constraints:
+
+Frontend:
+- React 19
+- TypeScript
+- Vite
+- Material UI
+- TanStack Query
+- React Hook Form
+- Zod
+
+Backend:
+- NestJS
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+
+Authentication:
+- JWT Access Token
+- Refresh Token
+
+Storage:
+- S3 Compatible Object Storage
+
+Deployment:
+- Docker
+- Kubernetes
+
+Testing:
+- Vitest
+- Playwright
+- Jest
+
+Architecture Requirements:
+
+- Modular monolith architecture
+- Domain-driven module separation
+- REST APIs
+- RBAC authorization
+- Audit logging
+- Server-side pagination
+- Soft delete support
+- Search and filtering support
+- File attachment support
+
+Generate:
+- Architecture design
+- Module breakdown
+- Database schema
+- API design
+- Security design
+- Testing strategy
+- Deployment strategy
+- Risks and mitigations
