@@ -1,13 +1,20 @@
 # --- Build stage ---
 FROM node:20-alpine AS builder
-WORKDIR /app
+WORKDIR /workspace
 
-COPY package*.json ./
-RUN npm ci
+RUN corepack enable
 
-COPY . .
-RUN npx prisma generate
-RUN npm run build
+# Copy workspace manifests first for layer caching
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY backend/package.json ./backend/
+COPY frontend/package.json ./frontend/
+COPY e2e/package.json ./e2e/
+
+RUN pnpm install --frozen-lockfile
+
+COPY backend/ ./backend/
+RUN pnpm --filter backend exec prisma generate
+RUN pnpm --filter backend run build
 
 # --- Production stage ---
 FROM node:20-alpine AS runner
@@ -15,12 +22,21 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package*.json ./
-RUN npm ci --omit=dev
+RUN corepack enable
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+# Copy workspace manifests for prod install
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY backend/package.json ./backend/
+COPY frontend/package.json ./frontend/
+COPY e2e/package.json ./e2e/
+
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy prisma schema and regenerate client for this platform
+COPY --from=builder /workspace/backend/prisma ./backend/prisma
+RUN pnpm --filter backend exec prisma generate
+
+COPY --from=builder /workspace/backend/dist ./backend/dist
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nestjs && \
@@ -33,4 +49,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- http://localhost:3000/health || exit 1
 
-CMD ["node", "dist/main"]
+CMD ["node", "backend/dist/main"]

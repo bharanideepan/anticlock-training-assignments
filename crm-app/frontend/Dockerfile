@@ -1,20 +1,29 @@
 # --- Build stage ---
 FROM node:20-alpine AS builder
-WORKDIR /app
+WORKDIR /workspace
 
-COPY package*.json ./
-RUN npm ci
+RUN corepack enable
 
-COPY . .
+# Copy workspace manifests first for layer caching
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY backend/package.json ./backend/
+COPY frontend/package.json ./frontend/
+COPY e2e/package.json ./e2e/
+
+RUN pnpm install --frozen-lockfile
+
+COPY frontend/ ./frontend/
+
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
-RUN npm run build
+
+RUN pnpm --filter frontend run build
 
 # --- Production stage ---
 FROM nginx:1.27-alpine AS runner
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /workspace/frontend/dist /usr/share/nginx/html
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN addgroup --system --gid 1001 appgroup && \
     adduser --system --uid 1001 appuser && \

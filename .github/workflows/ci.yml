@@ -125,7 +125,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build backend image
-        run: docker build -t crm-backend:${{ github.sha }} ./crm-app/backend
+        run: docker build -t crm-backend:${{ github.sha }} --file ./crm-app/backend/Dockerfile ./crm-app
 
       - name: Build frontend image
-        run: docker build -t crm-frontend:${{ github.sha }} --build-arg VITE_API_URL=/api ./crm-app/frontend
+        run: docker build -t crm-frontend:${{ github.sha }} --build-arg VITE_API_URL=/api --file ./crm-app/frontend/Dockerfile ./crm-app
