@@ -106,8 +106,6 @@ test.describe('US3 — Modal dialogs open and close without error', () => {
     await bell.click();
     await page.waitForTimeout(500);
 
-    // Popover should be visible
-    const popover = page.locator('[role="presentation"]').or(page.locator('.MuiPopover-root')).first();
     // Close by clicking outside
     await page.keyboard.press('Escape');
     await page.waitForTimeout(300);

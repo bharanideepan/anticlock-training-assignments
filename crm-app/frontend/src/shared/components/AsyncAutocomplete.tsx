@@ -62,12 +62,16 @@ export default function AsyncAutocomplete({
     if (value) {
       if (!selectedOption || selectedOption.id !== value) {
         const lbl = initialLabel ?? value;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelectedOption({ id: value, label: lbl });
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setInputValue(lbl);
       }
     } else {
       if (selectedOption !== null) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelectedOption(null);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setInputValue('');
       }
     }
