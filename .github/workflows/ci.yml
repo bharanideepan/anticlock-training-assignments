@@ -75,7 +75,7 @@ jobs:
         run: pnpm run lint
 
       - name: Unit tests
-        run: pnpm exec jest --passWithNoTests
+        run: pnpm run test
 
       - name: Build
         run: pnpm run build
@@ -109,9 +109,6 @@ jobs:
 
       - name: Type check
         run: pnpm exec tsc --noEmit
-
-      - name: Unit tests
-        run: pnpm exec jest --passWithNoTests
 
       - name: Build
         run: pnpm run build
