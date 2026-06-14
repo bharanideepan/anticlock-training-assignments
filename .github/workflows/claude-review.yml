@@ -1,0 +1,33 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main, develop]
+
+jobs:
+  claude-review:
+    name: Claude Code Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          direct_prompt: |
+            Review this pull request for the CRM application (NestJS backend, React + MUI v9 frontend, Prisma ORM).
+            Focus on:
+            - Correctness: logic bugs, off-by-one errors, missing null/undefined guards
+            - Security: SQL injection via raw queries, missing auth guards, sensitive data exposure
+            - NestJS patterns: proper use of guards, interceptors, DTOs with class-validator
+            - Prisma: N+1 query risks, missing transactions for multi-step writes
+            - React/TypeScript: hook dependency arrays, type safety, MUI v9 sx prop usage
+            - Test coverage: are new service methods covered by unit tests?
+            Be concise — flag real issues, skip style nits already handled by ESLint.
