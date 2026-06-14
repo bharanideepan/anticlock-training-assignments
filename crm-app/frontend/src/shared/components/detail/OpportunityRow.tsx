@@ -38,7 +38,7 @@ export default function OpportunityRow({ opportunity, onClick }: OpportunityRowP
     <ListItemButton divider onClick={onClick}>
       <Box sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body2" fontWeight={600} sx={{ flex: 1, minWidth: 0 }} noWrap>
+          <Typography variant="body2" sx={{ fontWeight: 600, flex: 1, minWidth: 0 }} noWrap>
             {opportunity.name}
           </Typography>
           <Chip

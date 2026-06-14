@@ -22,7 +22,7 @@ export default function ContactRow({ contact, onClick }: ContactRowProps) {
     <ListItemButton divider onClick={onClick} sx={{ alignItems: 'flex-start' }}>
       <ListItemText
         primary={
-          <Typography variant="body2" fontWeight={600}>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
             {contact.firstName} {contact.lastName}
           </Typography>
         }
@@ -59,7 +59,7 @@ export default function ContactRow({ contact, onClick }: ContactRowProps) {
             )}
           </Box>
         }
-        secondaryTypographyProps={{ component: 'span' }}
+        slotProps={{ secondary: { component: 'span' } }}
       />
     </ListItemButton>
   );

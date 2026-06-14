@@ -44,9 +44,9 @@ export default function UserAvatarMenu({ user, onLogout }: UserAvatarMenuProps) 
         slotProps={{ paper: { sx: { minWidth: 200, mt: 0.5 } } }}
       >
         <Box sx={{ px: 2, py: 1.5 }}>
-          <Typography variant="body2" fontWeight={600} noWrap>{fullName}</Typography>
+          <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{fullName}</Typography>
           {user?.role?.name && (
-            <Typography variant="caption" color="text.secondary" noWrap display="block">
+            <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
               {user.role.name.replace(/_/g, ' ')}
             </Typography>
           )}

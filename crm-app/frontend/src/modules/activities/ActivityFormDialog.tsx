@@ -1,4 +1,5 @@
 import { useForm, Controller } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -15,7 +16,7 @@ const schema = z.object({
   subject: z.string().min(1),
   description: z.string().optional(),
   scheduledAt: z.string().optional(),
-  durationMinutes: z.coerce.number().int().positive().optional().or(z.literal(0)).transform((v) => v || undefined),
+  durationMinutes: z.coerce.number().int().min(0).optional(),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -31,7 +32,7 @@ export default function ActivityFormDialog({ open, onClose, customerId, contactI
   const createMutation = useCreateActivity();
 
   const { register, handleSubmit, control, reset, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as Resolver<FormValues>,
     defaultValues: { type: 'PHONE_CALL', subject: '' },
   });
 

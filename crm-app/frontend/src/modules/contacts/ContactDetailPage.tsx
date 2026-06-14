@@ -87,7 +87,7 @@ export default function ContactDetailPage() {
       <Paper sx={{ p: 2, mb: 3 }}>
         <Stack spacing={1}>
           {contact.email && (
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <EmailIcon fontSize="small" color="action" />
               <Typography
                 variant="body2"
@@ -100,7 +100,7 @@ export default function ContactDetailPage() {
             </Stack>
           )}
           {contact.phone && (
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <PhoneIcon fontSize="small" color="action" />
               <Typography
                 variant="body2"

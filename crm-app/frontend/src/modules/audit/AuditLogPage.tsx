@@ -92,7 +92,7 @@ function ExpandableRow({ log }: { log: NonNullable<ReturnType<typeof useAuditLog
         </TableCell>
         <TableCell>{log.resourceType || '—'}</TableCell>
         <TableCell>
-          <Typography variant="caption" fontFamily="monospace">
+          <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
             {log.resourceId ? log.resourceId.slice(0, 8) + '…' : '—'}
           </Typography>
         </TableCell>

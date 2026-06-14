@@ -144,7 +144,7 @@ export default function ImportExportPage() {
       </Tabs>
 
       {tab === 0 && (
-        <Stack gap={2}>
+        <Stack sx={{ gap: 2 }}>
           <ImportCard
             title="Import Customers"
             exampleCsv={CUSTOMER_CSV_EXAMPLE}
@@ -164,7 +164,7 @@ export default function ImportExportPage() {
       )}
 
       {tab === 1 && (
-        <Stack gap={2}>
+        <Stack sx={{ gap: 2 }}>
           <ExportCard entity="customers" label="Customers" />
           <ExportCard entity="contacts" label="Contacts" />
         </Stack>

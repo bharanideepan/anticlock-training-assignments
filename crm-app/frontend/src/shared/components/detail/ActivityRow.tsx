@@ -30,7 +30,7 @@ export default function ActivityRow({ activity, onClick }: ActivityRowProps) {
           sx={{ flexShrink: 0, mt: 0.25 }}
         />
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="body2" fontWeight={600} noWrap>{activity.subject}</Typography>
+          <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{activity.subject}</Typography>
           {preview && (
             <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
               {preview}

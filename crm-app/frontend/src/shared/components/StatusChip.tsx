@@ -1,4 +1,5 @@
-import { Chip, ChipProps } from '@mui/material';
+import { Chip } from '@mui/material';
+import type { ChipProps } from '@mui/material';
 import type { CustomerStatus, TaskStatus, UserStatus } from '../types/api.types';
 
 type Status = CustomerStatus | TaskStatus | UserStatus | string;

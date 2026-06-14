@@ -48,7 +48,7 @@ export default function ActivitiesPage() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>Activities</Typography>
+      <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>Activities</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>All CRM activity logs across customers and contacts</Typography>
 
       <Stack direction="row" spacing={2} sx={{ mb: 2, flexWrap: 'wrap' }}>
@@ -116,7 +116,7 @@ export default function ActivitiesPage() {
                   </TableCell>
                   <TableCell sx={{ maxWidth: 240 }}>
                     <Tooltip title={activity.subject}>
-                      <Typography variant="body2" fontWeight={500} noWrap>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }} noWrap>
                         {activity.subject}
                       </Typography>
                     </Tooltip>

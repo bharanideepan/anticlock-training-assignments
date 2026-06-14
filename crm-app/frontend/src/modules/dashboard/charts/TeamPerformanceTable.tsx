@@ -31,7 +31,7 @@ export default function TeamPerformanceTable() {
             <TableRow key={row.user.id}>
               <TableCell sx={{ color: 'text.disabled', fontWeight: 600 }}>{idx + 1}</TableCell>
               <TableCell>
-                <Typography variant="body2" fontWeight={500}>
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
                   {row.user.firstName} {row.user.lastName}
                 </Typography>
               </TableCell>

@@ -55,7 +55,7 @@ export default function AsyncAutocomplete({
   const searchRef = useRef('');
   const pageRef = useRef(1);
   const loadingRef = useRef(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Sync external value → selectedOption (edit mode pre-population and form reset)
   useEffect(() => {
@@ -175,7 +175,7 @@ export default function AsyncAutocomplete({
           <Box sx={{ width: '100%', minWidth: 0 }}>
             <Typography variant="body2" noWrap>{option.label}</Typography>
             {option.subtitle && (
-              <Typography variant="caption" color="text.secondary" noWrap display="block">
+              <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
                 {option.subtitle}
               </Typography>
             )}

@@ -51,7 +51,7 @@ function ResultGroup({ label, items, total, onNavigate }: GroupProps) {
             <ListItemText
               primary={item.title}
               secondary={item.subtitle ? <Chip label={item.subtitle} size="small" variant="outlined" /> : undefined}
-              secondaryTypographyProps={{ component: 'span' }}
+              slotProps={{ secondary: { component: 'span' } }}
             />
           </ListItemButton>
         ))}

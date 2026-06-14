@@ -86,7 +86,7 @@ export default function ReportsPage() {
           <Typography color="text.secondary">Select a report type and apply filters to view results.</Typography>
         )}
         {appliedFilter && isLoading && <CircularProgress />}
-        {appliedFilter && !isLoading && data && (
+        {appliedFilter && !isLoading && !!data && (
           <Box>
             <Typography variant="subtitle2" color="text.secondary" sx={{mb: 2}}>
               {REPORT_TYPES.find((r) => r.value === reportType)?.label} — {new Date(appliedFilter.fromDate).toLocaleDateString()} to {new Date(appliedFilter.toDate).toLocaleDateString()}

@@ -99,7 +99,7 @@ function SsoConfigForm() {
           {...register('x509Certificate')}
           error={!!errors.x509Certificate}
           helperText={errors.x509Certificate?.message}
-          inputProps={{ style: { fontFamily: 'monospace', fontSize: 12 } }}
+          slotProps={{ input: { style: { fontFamily: 'monospace', fontSize: 12 } } }}
         />
 
         <Button

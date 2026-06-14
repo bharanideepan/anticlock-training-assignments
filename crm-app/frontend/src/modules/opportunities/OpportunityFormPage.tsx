@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -76,7 +77,7 @@ export default function OpportunityFormPage() {
   const updateMutation = useUpdateOpportunity();
 
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as Resolver<FormValues>,
     defaultValues: { customerId: defaultCustomerId },
   });
 
@@ -178,7 +179,7 @@ export default function OpportunityFormPage() {
               <TextField label="Expected revenue ($)" type="number" fullWidth size="small"
                 {...register('expectedRevenue')} />
               <TextField label="Probability (%)" type="number" fullWidth size="small"
-                {...register('probability')} inputProps={{ min: 0, max: 100 }} />
+                {...register('probability')} slotProps={{ input: { inputProps: { min: 0, max: 100 } } }} />
             </Stack>
 
             <TextField label="Expected close date" type="date" fullWidth size="small"

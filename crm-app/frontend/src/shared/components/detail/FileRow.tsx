@@ -28,16 +28,16 @@ export default function FileRow({ file }: FileRowProps) {
         <InsertDriveFileIcon color="action" fontSize="small" />
       </ListItemIcon>
       <ListItemText
-        primary={<Typography variant="body2" fontWeight={500}>{name}</Typography>}
+        primary={<Typography variant="body2" sx={{ fontWeight: 500 }}>{name}</Typography>}
         secondary={
           file.uploadedBy
             ? `${file.uploadedBy.firstName} ${file.uploadedBy.lastName}`
             : undefined
         }
-        secondaryTypographyProps={{ variant: 'caption' }}
+        slotProps={{ secondary: { variant: 'caption' } }}
       />
       <Box sx={{ textAlign: 'right', flexShrink: 0, ml: 1 }}>
-        <Typography variant="caption" color="text.secondary" display="block">
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
           {formatSize(file.sizeBytes)}
         </Typography>
         <Typography variant="caption" color="text.secondary">

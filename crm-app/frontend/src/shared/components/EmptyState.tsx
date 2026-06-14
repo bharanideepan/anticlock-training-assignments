@@ -29,7 +29,7 @@ export default function EmptyState({ icon, title, description, action }: EmptySt
       <Box sx={{ fontSize: 48, mb: 1.5, opacity: 0.4, display: 'flex' }}>
         {icon ?? <InboxIcon fontSize="inherit" />}
       </Box>
-      <Typography variant="body1" fontWeight={600} color="text.secondary" gutterBottom>
+      <Typography variant="body1" sx={{ fontWeight: 600 }} color="text.secondary" gutterBottom>
         {title}
       </Typography>
       {description && (

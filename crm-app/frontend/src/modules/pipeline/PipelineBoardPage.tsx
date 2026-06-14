@@ -76,7 +76,7 @@ export default function PipelineBoardPage() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>Pipeline</Typography>
+      <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>Pipeline</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         Drag opportunities between stages to update their status
       </Typography>

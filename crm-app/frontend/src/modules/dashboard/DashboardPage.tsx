@@ -14,7 +14,7 @@ export default function DashboardPage() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>Dashboard</Typography>
+      <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>Dashboard</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Overview of your CRM performance</Typography>
       <Divider sx={{ mb: 3 }} />
 

@@ -7,6 +7,7 @@ interface OpportunityListParams {
   pageSize?: number;
   search?: string;
   customerId?: string;
+  contactId?: string;
   ownerId?: string;
   stageId?: string;
   minRevenue?: number;

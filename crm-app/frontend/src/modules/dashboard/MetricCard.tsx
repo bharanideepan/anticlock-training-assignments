@@ -12,7 +12,7 @@ export default function MetricCard({ title, value, subtitle, loading, valueColor
   return (
     <Card variant="outlined" sx={{ height: '100%' }}>
       <CardContent sx={{ p: '12px 16px', '&:last-child': { pb: '12px' } }}>
-        <Typography variant="caption" color="text.secondary" display="block" gutterBottom sx={{ fontWeight: 500 }}>
+        <Typography variant="caption" color="text.secondary" gutterBottom sx={{ display: 'block', fontWeight: 500 }}>
           {title}
         </Typography>
         {loading ? (
