@@ -8,6 +8,7 @@ on:
 
 env:
   NODE_VERSION: '20'
+  PNPM_VERSION: '9'
 
 jobs:
   backend-lint-test:
@@ -50,29 +51,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: crm-app/backend/package-lock.json
+          cache: pnpm
+          cache-dependency-path: crm-app/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: npx prisma generate
+        run: pnpm exec prisma generate
 
       - name: Run migrations
-        run: npx prisma migrate deploy
+        run: pnpm exec prisma migrate deploy
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Unit tests
-        run: npm run test -- --passWithNoTests
+        run: pnpm run test -- --passWithNoTests
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
   frontend-lint-test:
     name: Frontend — Lint & Test
@@ -84,26 +89,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: crm-app/frontend/package-lock.json
+          cache: pnpm
+          cache-dependency-path: crm-app/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Type check
-        run: npx tsc --noEmit
+        run: pnpm exec tsc --noEmit
 
       - name: Unit tests
-        run: npm run test -- --passWithNoTests
+        run: pnpm run test -- --passWithNoTests
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
         env:
           VITE_API_URL: /api
 
