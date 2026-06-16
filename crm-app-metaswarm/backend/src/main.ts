@@ -1,6 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
@@ -8,6 +10,17 @@ async function bootstrap(): Promise<void> {
 
   // Use Pino logger
   app.useLogger(app.get(Logger));
+
+  // Cookie parser for httpOnly refresh token cookie
+  app.use(cookieParser());
+
+  // Global validation pipe — strips unknown fields, validates DTOs
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+  );
+
+  // Global serializer interceptor — respects @Exclude() on response classes
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Global API prefix
   app.setGlobalPrefix('api/v1');
