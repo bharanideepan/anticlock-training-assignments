@@ -10,6 +10,9 @@ import { UsersModule } from './users/users.module';
 import { TeamsModule } from './teams/teams.module';
 import { CustomersModule } from './customers/customers.module';
 import { ContactsModule } from './contacts/contacts.module';
+import { ActivitiesModule } from './activities/activities.module';
+import { OpportunitiesModule } from './opportunities/opportunities.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -30,6 +33,9 @@ import { ContactsModule } from './contacts/contacts.module';
     TeamsModule,
     CustomersModule,
     ContactsModule,
+    ActivitiesModule,
+    OpportunitiesModule,
+    TasksModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

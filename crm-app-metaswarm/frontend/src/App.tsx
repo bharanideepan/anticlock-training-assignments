@@ -19,6 +19,16 @@ const CustomerDetailPage = lazy(() => import('./pages/customers/CustomerDetailPa
 const ContactListPage = lazy(() => import('./pages/contacts/ContactListPage'));
 const ContactFormPage = lazy(() => import('./pages/contacts/ContactFormPage'));
 const ContactDetailPage = lazy(() => import('./pages/contacts/ContactDetailPage'));
+const ActivityListPage = lazy(() => import('./pages/activities/ActivityListPage'));
+const ActivityFormPage = lazy(() => import('./pages/activities/ActivityFormPage'));
+const ActivityDetailPage = lazy(() => import('./pages/activities/ActivityDetailPage'));
+const OpportunityListPage = lazy(() => import('./pages/opportunities/OpportunityListPage'));
+const OpportunityFormPage = lazy(() => import('./pages/opportunities/OpportunityFormPage'));
+const OpportunityDetailPage = lazy(() => import('./pages/opportunities/OpportunityDetailPage'));
+const PipelineBoardPage = lazy(() => import('./pages/pipeline/PipelineBoardPage'));
+const TaskListPage = lazy(() => import('./pages/tasks/TaskListPage'));
+const TaskFormPage = lazy(() => import('./pages/tasks/TaskFormPage'));
+const TaskDetailPage = lazy(() => import('./pages/tasks/TaskDetailPage'));
 
 const theme = createTheme();
 const queryClient = new QueryClient();
@@ -39,6 +49,9 @@ const CUSTOMER_ROLES = [
   'READ_ONLY',
 ];
 const CUSTOMER_WRITE_ROLES = ['SYSTEM_ADMINISTRATOR', 'SALES_MANAGER', 'SALES_REPRESENTATIVE'];
+const ACTIVITY_WRITE_ROLES = [
+  'SYSTEM_ADMINISTRATOR', 'SALES_MANAGER', 'SALES_REPRESENTATIVE', 'SUPPORT_REPRESENTATIVE',
+];
 
 function App() {
   return (
@@ -93,6 +106,43 @@ function App() {
                   <Route element={<RoleGuard allowedRoles={CUSTOMER_WRITE_ROLES} />}>
                     <Route path="/contacts/new" element={<ContactFormPage />} />
                     <Route path="/contacts/:id/edit" element={<ContactFormPage />} />
+                  </Route>
+
+                  {/* Activities — all roles can view */}
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_ROLES} />}>
+                    <Route path="/activities" element={<ActivityListPage />} />
+                    <Route path="/activities/:id" element={<ActivityDetailPage />} />
+                  </Route>
+
+                  {/* Activities — write roles */}
+                  <Route element={<RoleGuard allowedRoles={ACTIVITY_WRITE_ROLES} />}>
+                    <Route path="/activities/new" element={<ActivityFormPage />} />
+                    <Route path="/activities/:id/edit" element={<ActivityFormPage />} />
+                  </Route>
+
+                  {/* Opportunities — all roles can view */}
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_ROLES} />}>
+                    <Route path="/opportunities" element={<OpportunityListPage />} />
+                    <Route path="/opportunities/:id" element={<OpportunityDetailPage />} />
+                    <Route path="/pipeline" element={<PipelineBoardPage />} />
+                  </Route>
+
+                  {/* Opportunities — write roles */}
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_WRITE_ROLES} />}>
+                    <Route path="/opportunities/new" element={<OpportunityFormPage />} />
+                    <Route path="/opportunities/:id/edit" element={<OpportunityFormPage />} />
+                  </Route>
+
+                  {/* Tasks — all roles can view */}
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_ROLES} />}>
+                    <Route path="/tasks" element={<TaskListPage />} />
+                    <Route path="/tasks/:id" element={<TaskDetailPage />} />
+                  </Route>
+
+                  {/* Tasks — write roles */}
+                  <Route element={<RoleGuard allowedRoles={ACTIVITY_WRITE_ROLES} />}>
+                    <Route path="/tasks/new" element={<TaskFormPage />} />
+                    <Route path="/tasks/:id/edit" element={<TaskFormPage />} />
                   </Route>
                 </Route>
 
