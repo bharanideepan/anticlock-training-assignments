@@ -1,3 +1,11 @@
+## Known CI / Infrastructure Issues (do not block on these)
+
+- **Claude Code Review action** (`anthropics/claude-code-action@beta`) — runs in `tag` mode only (triggered by `@claude` mentions). Failures here are not code quality failures; ignore them when assessing PR health.
+- **Vercel deployment** — connected to the repo but configured for the repo root, not `crm-app-metaswarm/frontend/`. Deployment failures are a Vercel project config issue, not a code issue.
+- **Local quality gates are authoritative**: `pnpm --filter backend test`, `pnpm --filter frontend test`, `pnpm --filter backend build`, `pnpm --filter frontend build`, ESLint. CI status on PRs may show red from the above infra issues — do not block task completion or PR creation on them.
+
+---
+
 ## Project Overview
 
 Full-featured enterprise CRM platform: customers, contacts, sales opportunities, tasks, activities, reporting, and team collaboration. REST API (NestJS) + React SPA + PostgreSQL.
