@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TeamsModule } from './teams/teams.module';
 import { CustomersModule } from './customers/customers.module';
+import { ContactsModule } from './contacts/contacts.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CustomersModule } from './customers/customers.module';
     UsersModule,
     TeamsModule,
     CustomersModule,
+    ContactsModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

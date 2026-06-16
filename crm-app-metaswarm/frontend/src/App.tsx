@@ -16,6 +16,9 @@ const UserDetailPage = lazy(() => import('./pages/users/UserDetailPage'));
 const CustomerListPage = lazy(() => import('./pages/customers/CustomerListPage'));
 const CustomerFormPage = lazy(() => import('./pages/customers/CustomerFormPage'));
 const CustomerDetailPage = lazy(() => import('./pages/customers/CustomerDetailPage'));
+const ContactListPage = lazy(() => import('./pages/contacts/ContactListPage'));
+const ContactFormPage = lazy(() => import('./pages/contacts/ContactFormPage'));
+const ContactDetailPage = lazy(() => import('./pages/contacts/ContactDetailPage'));
 
 const theme = createTheme();
 const queryClient = new QueryClient();
@@ -78,6 +81,18 @@ function App() {
                   <Route element={<RoleGuard allowedRoles={CUSTOMER_WRITE_ROLES} />}>
                     <Route path="/customers/new" element={<CustomerFormPage />} />
                     <Route path="/customers/:id/edit" element={<CustomerFormPage />} />
+                  </Route>
+
+                  {/* Contacts — all roles can view */}
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_ROLES} />}>
+                    <Route path="/contacts" element={<ContactListPage />} />
+                    <Route path="/contacts/:id" element={<ContactDetailPage />} />
+                  </Route>
+
+                  {/* Contacts — write roles */}
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_WRITE_ROLES} />}>
+                    <Route path="/contacts/new" element={<ContactFormPage />} />
+                    <Route path="/contacts/:id/edit" element={<ContactFormPage />} />
                   </Route>
                 </Route>
 
