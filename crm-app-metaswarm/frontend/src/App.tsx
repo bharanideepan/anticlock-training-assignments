@@ -4,11 +4,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { AuthGuard } from './guards/AuthGuard';
+import { RoleGuard } from './guards/RoleGuard';
 
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
 const SsoCallbackPage = lazy(() => import('./pages/auth/SsoCallbackPage'));
 const PasswordResetPage = lazy(() => import('./pages/auth/PasswordResetPage'));
 const ChangePasswordPage = lazy(() => import('./pages/auth/ChangePasswordPage'));
+const UserListPage = lazy(() => import('./pages/users/UserListPage'));
+const UserFormPage = lazy(() => import('./pages/users/UserFormPage'));
+const UserDetailPage = lazy(() => import('./pages/users/UserDetailPage'));
 
 const theme = createTheme();
 const queryClient = new QueryClient();
@@ -18,6 +22,9 @@ const Loading = () => (
     <CircularProgress />
   </Box>
 );
+
+const USER_MGMT_ROLES = ['SYSTEM_ADMINISTRATOR', 'SALES_MANAGER'];
+const ADMIN_ONLY = ['SYSTEM_ADMINISTRATOR'];
 
 function App() {
   return (
@@ -37,6 +44,18 @@ function App() {
                 <Route element={<AuthGuard />}>
                   <Route path="/profile/change-password" element={<ChangePasswordPage />} />
                   <Route path="/" element={<div>Dashboard — coming soon</div>} />
+
+                  {/* Users & Teams — ADMIN + MANAGER view */}
+                  <Route element={<RoleGuard allowedRoles={USER_MGMT_ROLES} />}>
+                    <Route path="/users" element={<UserListPage />} />
+                    <Route path="/users/:id" element={<UserDetailPage />} />
+                  </Route>
+
+                  {/* Users — ADMIN create/edit */}
+                  <Route element={<RoleGuard allowedRoles={ADMIN_ONLY} />}>
+                    <Route path="/users/new" element={<UserFormPage />} />
+                    <Route path="/users/:id/edit" element={<UserFormPage />} />
+                  </Route>
                 </Route>
 
                 <Route path="*" element={<Navigate to="/" replace />} />
