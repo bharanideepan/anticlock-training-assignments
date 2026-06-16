@@ -114,6 +114,7 @@ export class TeamsController {
    * Restricted to SYSTEM_ADMINISTRATOR.
    */
   @Post(':id/members')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleName.SYSTEM_ADMINISTRATOR)
   async addMembers(
