@@ -101,6 +101,15 @@ describe('AuthController', () => {
       expect(mockAuthService.handleSsoCallback).toHaveBeenCalledWith('sso@example.com', res);
       expect(result).toMatchObject({ data: expect.objectContaining({ accessToken: 'sso-jwt' }) });
     });
+
+    it('falls back to nameID when email is undefined in req.user', async () => {
+      const req = mockRequest({ user: { nameID: 'saml-user@example.com' } });
+      const res = mockResponse();
+
+      await controller.ssoCallback(req as never, res as never);
+
+      expect(mockAuthService.handleSsoCallback).toHaveBeenCalledWith('saml-user@example.com', res);
+    });
   });
 
   describe('POST /auth/refresh', () => {
@@ -113,6 +122,15 @@ describe('AuthController', () => {
       expect(mockAuthService.refreshAccessToken).toHaveBeenCalledWith('token-id:raw-token', res);
       expect(result).toMatchObject({ data: expect.objectContaining({ accessToken: 'new-jwt' }) });
     });
+
+    it('passes empty string when crm_refresh cookie is absent', async () => {
+      const req = mockRequest({ cookies: {} });
+      const res = mockResponse();
+
+      await controller.refresh(req as never, res as never);
+
+      expect(mockAuthService.refreshAccessToken).toHaveBeenCalledWith('', res);
+    });
   });
 
   describe('POST /auth/logout', () => {
@@ -123,6 +141,15 @@ describe('AuthController', () => {
       await controller.logout(req as never, res as never);
 
       expect(mockAuthService.logout).toHaveBeenCalledWith('user-1', 'token-id:raw-token', res);
+    });
+
+    it('passes empty string when crm_refresh cookie is absent', async () => {
+      const req = mockRequest({ cookies: {} });
+      const res = mockResponse();
+
+      await controller.logout(req as never, res as never);
+
+      expect(mockAuthService.logout).toHaveBeenCalledWith('user-1', '', res);
     });
   });
 

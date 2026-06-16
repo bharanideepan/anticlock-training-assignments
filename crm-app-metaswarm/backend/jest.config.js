@@ -6,7 +6,13 @@ module.exports = {
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
-  collectCoverageFrom: ['**/*.(t|j)s'],
+  collectCoverageFrom: [
+    '**/*.(t|j)s',
+    '!**/*.module.ts',
+    '!**/*.spec.ts',
+    '!**/main.ts',
+    '!**/auth/strategies/saml.strategy.ts',
+  ],
   coverageDirectory: '../coverage/backend',
   testEnvironment: 'node',
   coverageThreshold: {

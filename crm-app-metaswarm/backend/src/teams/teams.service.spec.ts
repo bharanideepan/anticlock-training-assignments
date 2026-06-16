@@ -234,6 +234,19 @@ describe('TeamsService', () => {
         _count: { select: { members: true } },
       });
     });
+
+    it('uses default page=1, pageSize=20, sortOrder=asc when query is empty', async () => {
+      await service.findAll({});
+
+      const findManyCall = mockPrisma.team.findMany.mock.calls[0][0] as {
+        skip: number;
+        take: number;
+        orderBy: Record<string, string>;
+      };
+      expect(findManyCall.skip).toBe(0);
+      expect(findManyCall.take).toBe(20);
+      expect(findManyCall.orderBy).toEqual({ name: 'asc' });
+    });
   });
 
   // -------------------------------------------------------------------------

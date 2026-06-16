@@ -100,6 +100,17 @@ describe('AuthService', () => {
       );
     });
 
+    it('returns null when user has no passwordHash (SSO-only user)', async () => {
+      const ssoUser = { ...mockAdminUser, passwordHash: null };
+      mockPrisma.user.findUnique.mockResolvedValue(ssoUser);
+      mockPrisma.auditLog.create.mockResolvedValue({});
+      const result = await service.validateUser('sso@example.com', 'anypass');
+      expect(result).toBeNull();
+      expect(mockPrisma.auditLog.create).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ action: AuditAction.LOGIN_FAILED }) }),
+      );
+    });
+
     it('returns null for non-SYSTEM_ADMINISTRATOR users', async () => {
       const salesUser = {
         ...mockAdminUser,
@@ -209,6 +220,27 @@ describe('AuthService', () => {
       ).rejects.toMatchObject({ message: 'REFRESH_TOKEN_EXPIRED' });
     });
 
+    it('throws REFRESH_TOKEN_INVALID when token hash does not match', async () => {
+      // Token is found and not expired, but bcrypt.compare returns false (wrong raw token)
+      const tokenHash = await bcrypt.hash('correct-raw-token', 10);
+      mockPrisma.refreshToken.findFirst.mockResolvedValue({ ...validToken, tokenHash });
+      mockPrisma.refreshToken.delete.mockResolvedValue({});
+      await expect(
+        service.refreshAccessToken('wrong-raw-token', { cookie: jest.fn() } as never),
+      ).rejects.toMatchObject({ message: 'REFRESH_TOKEN_INVALID' });
+    });
+
+    it('throws REFRESH_TOKEN_INVALID when user no longer exists after token deletion', async () => {
+      const plainToken = 'raw-refresh-token';
+      const tokenHash = await bcrypt.hash(plainToken, 10);
+      mockPrisma.refreshToken.findFirst.mockResolvedValue({ ...validToken, tokenHash });
+      mockPrisma.refreshToken.delete.mockResolvedValue({});
+      mockPrisma.user.findUnique.mockResolvedValue(null); // user deleted
+      await expect(
+        service.refreshAccessToken(plainToken, { cookie: jest.fn() } as never),
+      ).rejects.toMatchObject({ message: 'REFRESH_TOKEN_INVALID' });
+    });
+
     it('rotates token and returns new accessToken', async () => {
       const plainToken = 'raw-refresh-token';
       const tokenHash = await bcrypt.hash(plainToken, 10);
@@ -295,6 +327,14 @@ describe('AuthService', () => {
 
   // ─── changePassword ──────────────────────────────────────────────────────────
   describe('changePassword', () => {
+    it('throws CURRENT_PASSWORD_INCORRECT when user has no passwordHash (SSO-only user)', async () => {
+      const ssoUser = { ...mockAdminUser, passwordHash: null };
+      mockPrisma.user.findUnique.mockResolvedValue(ssoUser);
+      await expect(
+        service.changePassword('user-1', 'any-password', 'NewPass123!'),
+      ).rejects.toMatchObject({ message: 'CURRENT_PASSWORD_INCORRECT' });
+    });
+
     it('throws CURRENT_PASSWORD_INCORRECT when password does not match', async () => {
       mockPrisma.user.findUnique.mockResolvedValue(mockAdminUser);
       await expect(
