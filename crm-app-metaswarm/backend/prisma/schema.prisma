@@ -10,6 +10,444 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Domain models are added in subsequent work units (WU-003+).
-// This file intentionally contains only the datasource and generator blocks
-// as the initial scaffold.
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum RoleName {
+  SYSTEM_ADMINISTRATOR
+  SALES_MANAGER
+  SALES_REPRESENTATIVE
+  SUPPORT_REPRESENTATIVE
+  READ_ONLY
+}
+
+enum CustomerStatus {
+  PROSPECT
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum RevenueRange {
+  UNDER_1M
+  ONE_M_10M   @map("1M_10M")
+  TEN_M_50M   @map("10M_50M")
+  FIFTY_M_250M @map("50M_250M")
+  OVER_250M
+}
+
+enum ActivityType {
+  PHONE_CALL
+  MEETING
+  EMAIL
+  NOTE
+  FOLLOW_UP
+}
+
+enum TerminalOutcome {
+  WON
+  LOST
+}
+
+enum TaskType {
+  FOLLOW_UP
+  CALL
+  MEETING
+  EMAIL
+  INTERNAL_ACTION
+}
+
+enum TaskStatus {
+  OPEN
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  OPPORTUNITY_ASSIGNED
+  DUE_DATE_REMINDER
+  OVERDUE_TASK
+  CUSTOMER_UPDATED
+}
+
+enum ResourceType {
+  CUSTOMER
+  OPPORTUNITY
+  ACTIVITY
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+  LOGIN_FAILED
+  PASSWORD_RESET
+  RECORD_CREATED
+  RECORD_UPDATED
+  RECORD_DELETED
+  STATUS_CHANGED
+  OWNERSHIP_CHANGED
+  ROLE_CHANGED
+  IMPORT_COMPLETED
+}
+
+enum SsoProvider {
+  SAML
+  OIDC
+}
+
+enum ImportType {
+  CUSTOMER
+  CONTACT
+}
+
+enum ImportStatus {
+  PENDING
+  VALIDATING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model Role {
+  id    String   @id @default(uuid())
+  name  RoleName @unique
+
+  users User[]
+
+  @@map("roles")
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String?
+  firstName    String
+  lastName     String
+  phone        String?
+  jobTitle     String?
+  status       UserStatus @default(ACTIVE)
+  roleId       String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+
+  role             Role              @relation(fields: [roleId], references: [id])
+  teamMemberships  TeamMember[]
+  managedTeams     Team[]            @relation("TeamManager")
+  ownedCustomers   Customer[]        @relation("CustomerOwner")
+  ownedOpportunities Opportunity[]   @relation("OpportunityOwner")
+  assignedTasks    Task[]            @relation("TaskAssignee")
+  createdTasks     Task[]            @relation("TaskCreator")
+  createdActivities Activity[]       @relation("ActivityCreator")
+  notifications    Notification[]
+  uploadedFiles    File[]
+  refreshTokens    RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  importJobs       ImportJob[]
+
+  @@index([roleId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Team {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  managerId   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  manager     User?        @relation("TeamManager", fields: [managerId], references: [id])
+  members     TeamMember[]
+
+  @@map("teams")
+}
+
+model TeamMember {
+  userId   String
+  teamId   String
+  joinedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@id([userId, teamId])
+  @@map("team_members")
+}
+
+model Customer {
+  id           String         @id @default(uuid())
+  companyName  String
+  industry     String?
+  website      String?
+  revenueRange RevenueRange?
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  state        String?
+  country      String?
+  postalCode   String?
+  status       CustomerStatus @default(PROSPECT)
+  ownerId      String
+  searchVector Unsupported("tsvector")?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+
+  owner        User          @relation("CustomerOwner", fields: [ownerId], references: [id])
+  contacts     Contact[]
+  activities   Activity[]
+  opportunities Opportunity[]
+  tasks        Task[]
+
+  @@index([status, ownerId, deletedAt])
+  @@map("customers")
+}
+
+model Contact {
+  id           String    @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String?
+  phone        String?
+  designation  String?
+  department   String?
+  notes        String?
+  customerId   String
+  searchVector Unsupported("tsvector")?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  customer      Customer      @relation(fields: [customerId], references: [id])
+  activities    Activity[]
+  opportunities Opportunity[]
+
+  @@index([customerId, deletedAt])
+  @@map("contacts")
+}
+
+model Activity {
+  id              String       @id @default(uuid())
+  type            ActivityType
+  subject         String
+  description     String?
+  scheduledAt     DateTime?
+  durationMinutes Int?
+  customerId      String
+  contactId       String?
+  createdById     String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
+
+  customer  Customer @relation(fields: [customerId], references: [id])
+  contact   Contact? @relation(fields: [contactId], references: [id])
+  createdBy User     @relation("ActivityCreator", fields: [createdById], references: [id])
+
+  @@index([customerId, createdAt(sort: Desc)])
+  @@index([contactId])
+  @@index([createdById])
+  @@index([deletedAt])
+  @@map("activities")
+}
+
+model PipelineStage {
+  id              String           @id @default(uuid())
+  name            String
+  displayOrder    Int
+  isDefault       Boolean          @default(false)
+  isTerminal      Boolean          @default(false)
+  terminalOutcome TerminalOutcome?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+
+  opportunities Opportunity[]
+
+  @@map("pipeline_stages")
+}
+
+model Opportunity {
+  id                String    @id @default(uuid())
+  name              String
+  customerId        String
+  contactId         String?
+  ownerId           String
+  stageId           String
+  expectedRevenue   Decimal?  @db.Decimal(15, 2)
+  probability       Int?
+  expectedCloseDate DateTime?
+  actualCloseDate   DateTime?
+  closeNote         String?
+  searchVector      Unsupported("tsvector")?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  customer  Customer      @relation(fields: [customerId], references: [id])
+  contact   Contact?      @relation(fields: [contactId], references: [id])
+  owner     User          @relation("OpportunityOwner", fields: [ownerId], references: [id])
+  stage     PipelineStage @relation(fields: [stageId], references: [id])
+  tasks     Task[]
+
+  @@index([stageId, ownerId, deletedAt])
+  @@index([customerId])
+  @@index([expectedCloseDate])
+  @@map("opportunities")
+}
+
+model Task {
+  id            String     @id @default(uuid())
+  type          TaskType
+  title         String
+  description   String?
+  status        TaskStatus @default(OPEN)
+  dueDate       DateTime
+  completedAt   DateTime?
+  cancelledAt   DateTime?
+  assigneeId    String
+  createdById   String
+  customerId    String?
+  opportunityId String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+
+  assignee    User         @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  createdBy   User         @relation("TaskCreator", fields: [createdById], references: [id])
+  customer    Customer?    @relation(fields: [customerId], references: [id])
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id])
+
+  @@index([assigneeId, status, dueDate])
+  @@index([customerId])
+  @@index([opportunityId])
+  @@index([deletedAt])
+  @@map("tasks")
+}
+
+model Notification {
+  id           String           @id @default(uuid())
+  userId       String
+  type         NotificationType
+  title        String
+  body         String
+  resourceType String?
+  resourceId   String?
+  isRead       Boolean          @default(false)
+  readAt       DateTime?
+  createdAt    DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead, createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+model File {
+  id           String       @id @default(uuid())
+  originalName String
+  mimeType     String
+  sizeBytes    BigInt
+  s3Key        String
+  s3Bucket     String
+  resourceType ResourceType
+  resourceId   String
+  uploadedById String
+  createdAt    DateTime     @default(now())
+  deletedAt    DateTime?
+
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@index([resourceType, resourceId])
+  @@index([uploadedById])
+  @@index([deletedAt])
+  @@map("files")
+}
+
+model AuditLog {
+  id            String      @id @default(uuid())
+  actorId       String?
+  action        AuditAction
+  resourceType  String
+  resourceId    String?
+  previousValue Json?
+  newValue      Json?
+  ipAddress     String?
+  traceId       String?
+  createdAt     DateTime    @default(now())
+
+  @@index([resourceType, resourceId, createdAt(sort: Desc)])
+  @@index([actorId])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model RefreshToken {
+  id                 String    @id @default(uuid())
+  tokenHash          String    @unique
+  userId             String
+  expiresAt          DateTime
+  revokedAt          DateTime?
+  replacedByTokenId  String?
+  createdAt          DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  tokenHash String    @unique
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("password_reset_tokens")
+}
+
+model SsoConfig {
+  id        String      @id @default(uuid())
+  provider  SsoProvider
+  config    Json
+  isActive  Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@map("sso_configs")
+}
+
+model ImportJob {
+  id            String       @id @default(uuid())
+  type          ImportType
+  status        ImportStatus @default(PENDING)
+  totalRows     Int?
+  processedRows Int          @default(0)
+  errorRows     Int          @default(0)
+  uploadedById  String
+  inputS3Key    String
+  resultS3Key   String?
+  errorDetails  Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@map("import_jobs")
+}
