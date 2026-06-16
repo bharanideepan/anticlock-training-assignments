@@ -1,0 +1,17 @@
+{
+  "backend": {
+    "lines": 80,
+    "functions": 80,
+    "branches": 80,
+    "statements": 80
+  },
+  "frontend": {
+    "lines": 80,
+    "functions": 80,
+    "branches": 80,
+    "statements": 80
+  },
+  "enforcement": {
+    "command": "echo 'Coverage check: thresholds defined in jest.config and vite.config'"
+  }
+}

@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+**/dist/
+**/build/
+
+# Coverage reports
+coverage/
+**/coverage/
+
+# Prisma generated files
+**/prisma/migrations/
+**/node_modules/.prisma/
+
+# pnpm lock file
+pnpm-lock.yaml
+
+# Generated files
+**/*.generated.ts
+**/*.generated.js
+
+# Environment files
+.env
+.env.*
+
+# Editor directories
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
