@@ -13,6 +13,9 @@ const ChangePasswordPage = lazy(() => import('./pages/auth/ChangePasswordPage'))
 const UserListPage = lazy(() => import('./pages/users/UserListPage'));
 const UserFormPage = lazy(() => import('./pages/users/UserFormPage'));
 const UserDetailPage = lazy(() => import('./pages/users/UserDetailPage'));
+const CustomerListPage = lazy(() => import('./pages/customers/CustomerListPage'));
+const CustomerFormPage = lazy(() => import('./pages/customers/CustomerFormPage'));
+const CustomerDetailPage = lazy(() => import('./pages/customers/CustomerDetailPage'));
 
 const theme = createTheme();
 const queryClient = new QueryClient();
@@ -25,6 +28,14 @@ const Loading = () => (
 
 const USER_MGMT_ROLES = ['SYSTEM_ADMINISTRATOR', 'SALES_MANAGER'];
 const ADMIN_ONLY = ['SYSTEM_ADMINISTRATOR'];
+const CUSTOMER_ROLES = [
+  'SYSTEM_ADMINISTRATOR',
+  'SALES_MANAGER',
+  'SALES_REPRESENTATIVE',
+  'SUPPORT_REPRESENTATIVE',
+  'READ_ONLY',
+];
+const CUSTOMER_WRITE_ROLES = ['SYSTEM_ADMINISTRATOR', 'SALES_MANAGER', 'SALES_REPRESENTATIVE'];
 
 function App() {
   return (
@@ -55,6 +66,18 @@ function App() {
                   <Route element={<RoleGuard allowedRoles={ADMIN_ONLY} />}>
                     <Route path="/users/new" element={<UserFormPage />} />
                     <Route path="/users/:id/edit" element={<UserFormPage />} />
+                  </Route>
+
+                  {/* Customers — all authenticated roles can view */}
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_ROLES} />}>
+                    <Route path="/customers" element={<CustomerListPage />} />
+                    <Route path="/customers/:id" element={<CustomerDetailPage />} />
+                  </Route>
+
+                  {/* Customers — create/edit/archive (write roles only) */}
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_WRITE_ROLES} />}>
+                    <Route path="/customers/new" element={<CustomerFormPage />} />
+                    <Route path="/customers/:id/edit" element={<CustomerFormPage />} />
                   </Route>
                 </Route>
 
