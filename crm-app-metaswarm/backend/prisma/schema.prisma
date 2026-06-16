@@ -1,0 +1,15 @@
+// Prisma schema for CRM Platform
+// https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Domain models are added in subsequent work units (WU-003+).
+// This file intentionally contains only the datasource and generator blocks
+// as the initial scaffold.
