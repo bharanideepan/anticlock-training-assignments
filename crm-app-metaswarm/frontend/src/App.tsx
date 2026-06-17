@@ -32,6 +32,7 @@ const TaskListPage = lazy(() => import('./pages/tasks/TaskListPage'));
 const TaskFormPage = lazy(() => import('./pages/tasks/TaskFormPage'));
 const TaskDetailPage = lazy(() => import('./pages/tasks/TaskDetailPage'));
 const SearchResultsPage = lazy(() => import('./pages/search/SearchResultsPage'));
+const ReportPage = lazy(() => import('./pages/reports/ReportPage'));
 
 const theme = createTheme();
 const queryClient = new QueryClient();
@@ -149,6 +150,10 @@ function App() {
                   <Route element={<RoleGuard allowedRoles={ACTIVITY_WRITE_ROLES} />}>
                     <Route path="/tasks/new" element={<TaskFormPage />} />
                     <Route path="/tasks/:id/edit" element={<TaskFormPage />} />
+                  </Route>
+
+                  <Route element={<RoleGuard allowedRoles={CUSTOMER_WRITE_ROLES} />}>
+                    <Route path="/reports" element={<ReportPage />} />
                   </Route>
                 </Route>
 
