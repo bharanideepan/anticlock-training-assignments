@@ -26,6 +26,7 @@ const OpportunityListPage = lazy(() => import('./pages/opportunities/Opportunity
 const OpportunityFormPage = lazy(() => import('./pages/opportunities/OpportunityFormPage'));
 const OpportunityDetailPage = lazy(() => import('./pages/opportunities/OpportunityDetailPage'));
 const PipelineBoardPage = lazy(() => import('./pages/pipeline/PipelineBoardPage'));
+const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
 const TaskListPage = lazy(() => import('./pages/tasks/TaskListPage'));
 const TaskFormPage = lazy(() => import('./pages/tasks/TaskFormPage'));
 const TaskDetailPage = lazy(() => import('./pages/tasks/TaskDetailPage'));
@@ -70,7 +71,8 @@ function App() {
                 {/* Protected routes */}
                 <Route element={<AuthGuard />}>
                   <Route path="/profile/change-password" element={<ChangePasswordPage />} />
-                  <Route path="/" element={<div>Dashboard — coming soon</div>} />
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
 
                   {/* Users & Teams — ADMIN + MANAGER view */}
                   <Route element={<RoleGuard allowedRoles={USER_MGMT_ROLES} />}>

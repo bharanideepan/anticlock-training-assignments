@@ -13,6 +13,7 @@ import { ContactsModule } from './contacts/contacts.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { OpportunitiesModule } from './opportunities/opportunities.module';
 import { TasksModule } from './tasks/tasks.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { TasksModule } from './tasks/tasks.module';
     ActivitiesModule,
     OpportunitiesModule,
     TasksModule,
+    DashboardModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],
