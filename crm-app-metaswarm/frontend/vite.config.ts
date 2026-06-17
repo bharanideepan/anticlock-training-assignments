@@ -8,6 +8,11 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/setupTests.ts'],
+    server: {
+      deps: {
+        inline: ['@mui/icons-material'],
+      },
+    },
     coverage: {
       provider: 'v8',
       exclude: ['src/main.tsx'],
