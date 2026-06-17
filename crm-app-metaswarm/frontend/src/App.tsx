@@ -31,6 +31,7 @@ const NotificationCenterPage = lazy(() => import('./pages/notifications/Notifica
 const TaskListPage = lazy(() => import('./pages/tasks/TaskListPage'));
 const TaskFormPage = lazy(() => import('./pages/tasks/TaskFormPage'));
 const TaskDetailPage = lazy(() => import('./pages/tasks/TaskDetailPage'));
+const SearchResultsPage = lazy(() => import('./pages/search/SearchResultsPage'));
 
 const theme = createTheme();
 const queryClient = new QueryClient();
@@ -75,6 +76,7 @@ function App() {
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/notifications" element={<NotificationCenterPage />} />
+                  <Route path="/search" element={<SearchResultsPage />} />
 
                   {/* Users & Teams — ADMIN + MANAGER view */}
                   <Route element={<RoleGuard allowedRoles={USER_MGMT_ROLES} />}>
