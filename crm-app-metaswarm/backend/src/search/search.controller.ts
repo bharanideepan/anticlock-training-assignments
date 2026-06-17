@@ -22,7 +22,7 @@ export class SearchController {
 
   @Get()
   @ApiOperation({ summary: 'Global search across all entity types' })
-  async search(@Query() query: SearchQueryDto, @CurrentUser() actor: ActorPayload) {
+  async search(@Query() query: SearchQueryDto, @CurrentUser() actor: ActorPayload): Promise<{ data: unknown }> {
     const results = await this.searchService.search(actor, query);
     return { data: results };
   }

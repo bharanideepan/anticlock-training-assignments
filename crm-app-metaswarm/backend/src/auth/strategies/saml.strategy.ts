@@ -10,7 +10,7 @@ export class SamlStrategy extends PassportStrategy(Strategy, 'saml') {
     super({
       entryPoint: process.env.SAML_ENTRY_POINT ?? 'https://idp.example.com/saml/login',
       issuer: process.env.SAML_ISSUER ?? 'crm-app',
-      cert: process.env.SAML_CERT ?? 'TODO_CONFIGURE',
+      idpCert: process.env.SAML_CERT ?? 'TODO_CONFIGURE',
       callbackUrl: `${process.env.FRONTEND_URL ?? 'http://localhost:3000'}/auth/sso/callback`,
     });
   }

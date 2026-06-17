@@ -70,9 +70,14 @@ export interface PaginatedTasks {
   meta: { total: number; page: number; pageSize: number; totalPages: number };
 }
 
-export function listTasks(token: string, params?: Record<string, string>): Promise<PaginatedTasks> {
+export async function listTasks(token: string, params?: Record<string, string>): Promise<PaginatedTasks> {
   const qs = params ? `?${new URLSearchParams(params).toString()}` : '';
-  return apiFetch<PaginatedTasks>(qs, token);
+  const res = await fetch(`${BASE}${qs}`, {
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+  });
+  const json = (await res.json()) as PaginatedTasks & { error?: { message: string } };
+  if (!res.ok) throw new Error(json.error?.message ?? `Request failed: ${res.status}`);
+  return json;
 }
 
 export function getTask(token: string, id: string): Promise<Task> {

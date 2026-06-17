@@ -20,6 +20,14 @@ const USER_INCLUDE = {
   teamMemberships: { include: { team: true } },
 } as const;
 
+/** Flatten teamMemberships → teams for the API response. */
+function serializeUser<T extends { teamMemberships: Array<{ team: { id: string; name: string } }> }>(user: T) {
+  return {
+    ...user,
+    teams: user.teamMemberships.map((m) => ({ id: m.team.id, name: m.team.name })),
+  };
+}
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -93,7 +101,7 @@ export class UsersService {
     ]);
 
     return {
-      data: users,
+      data: users.map(serializeUser),
       meta: {
         total,
         page,
@@ -126,7 +134,7 @@ export class UsersService {
       }
     }
 
-    return user;
+    return serializeUser(user);
   }
 
   /**
@@ -171,7 +179,7 @@ export class UsersService {
     // Send activation / password-set link
     await this.authService.requestPasswordReset(email);
 
-    return user;
+    return serializeUser(user);
   }
 
   /**
@@ -180,11 +188,12 @@ export class UsersService {
   async update(id: string, dto: UpdateUserDto) {
     await this.findExistingUser(id);
 
-    return this.prisma.user.update({
+    const result = await this.prisma.user.update({
       where: { id },
       data: dto,
       include: USER_INCLUDE,
     });
+    return serializeUser(result);
   }
 
   /**
@@ -273,7 +282,7 @@ export class UsersService {
       },
     });
 
-    return updated;
+    return serializeUser(updated);
   }
 
   /**
@@ -291,10 +300,11 @@ export class UsersService {
       }),
     ]);
 
-    return this.prisma.user.findUnique({
+    const updated = await this.prisma.user.findUnique({
       where: { id },
       include: USER_INCLUDE,
     });
+    return updated ? serializeUser(updated) : null;
   }
 
   // ---------------------------------------------------------------------------

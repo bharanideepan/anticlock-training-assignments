@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -18,6 +19,7 @@ import { initiateSso } from '../../api/auth.api';
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
   const [apiError, setApiError] = useState<string | null>(null);
 
   const {
@@ -33,6 +35,7 @@ export default function LoginPage() {
     try {
       const data = await authApi.login(values.email, values.password);
       login(data);
+      navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
       setApiError(err instanceof Error ? err.message : 'Login failed');
     }

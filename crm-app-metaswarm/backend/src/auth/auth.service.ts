@@ -99,8 +99,8 @@ export class AuthService {
 
     res.cookie('crm_refresh', `${tokenId}:${rawToken}`, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
     });
 
     await this.prisma.auditLog.create({
