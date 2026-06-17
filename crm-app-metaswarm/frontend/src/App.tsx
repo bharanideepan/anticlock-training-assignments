@@ -27,6 +27,7 @@ const OpportunityFormPage = lazy(() => import('./pages/opportunities/Opportunity
 const OpportunityDetailPage = lazy(() => import('./pages/opportunities/OpportunityDetailPage'));
 const PipelineBoardPage = lazy(() => import('./pages/pipeline/PipelineBoardPage'));
 const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
+const NotificationCenterPage = lazy(() => import('./pages/notifications/NotificationCenterPage'));
 const TaskListPage = lazy(() => import('./pages/tasks/TaskListPage'));
 const TaskFormPage = lazy(() => import('./pages/tasks/TaskFormPage'));
 const TaskDetailPage = lazy(() => import('./pages/tasks/TaskDetailPage'));
@@ -73,6 +74,7 @@ function App() {
                   <Route path="/profile/change-password" element={<ChangePasswordPage />} />
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/notifications" element={<NotificationCenterPage />} />
 
                   {/* Users & Teams — ADMIN + MANAGER view */}
                   <Route element={<RoleGuard allowedRoles={USER_MGMT_ROLES} />}>

@@ -14,6 +14,7 @@ import { ActivitiesModule } from './activities/activities.module';
 import { OpportunitiesModule } from './opportunities/opportunities.module';
 import { TasksModule } from './tasks/tasks.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     OpportunitiesModule,
     TasksModule,
     DashboardModule,
+    NotificationsModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],
